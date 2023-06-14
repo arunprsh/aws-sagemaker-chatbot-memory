@@ -1,0 +1,11 @@
+opensearch:
+    credentials:
+        username: xxxxxxxx
+        password: xxxxxxxx
+    domain:
+        endpoint: https://xxxxxxxx.us-east-1.es.amazonaws.com
+        index: legal-passages
+jumpstart:
+    text_gen_endpoint_name: xxxxxxxx
+    text_embed_endpoint_name: xxxxxxxx
+    
