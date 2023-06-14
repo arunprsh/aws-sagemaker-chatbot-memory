@@ -6,9 +6,6 @@ __pycache__/
 # C extensions
 *.so
 
-# Ignore yml files 
-*.yml
-
 # Distribution / packaging
 .Python
 build/
