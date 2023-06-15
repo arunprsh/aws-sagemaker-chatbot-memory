@@ -1,0 +1,6 @@
+credentials:
+    username: js-es
+    password: JumpStart123!
+domain:
+    endpoint: https://search-semantic-search-hryn56c5jy43yryimohz4ajvyi.us-east-1.es.amazonaws.com
+    index: conversations

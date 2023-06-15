@@ -19,6 +19,8 @@ sagemaker_runtime = boto3.client('sagemaker-runtime')
 # Reference SageMaker JumpStart endpoints
 domain_endpoint = os.environ['OS_ENDPOINT']
 domain_index = os.environ['OS_INDEX_NAME']
+os_username = os.environ['OS_USERNAME']
+os_password = os.environ['OS_PASSWORD']
 
 # Reference Amazon OpenSearch endpoint
 URL = f'{domain_endpoint}/{domain_index}'
@@ -131,10 +133,9 @@ def write_to_elasticsearch(session_id: str, embedding: list, end_time: int, summ
         'created_at': end_time,
         'conversation_summary': summary
     }
-    es_username = os.environ['ES_USERNAME']
-    es_password = os.environ['ES_PASSWORD']
+    
     try:
-        response = requests.post(f'{URL}/_doc/{session_id}', auth=HTTPBasicAuth(es_username, es_password),
+        response = requests.post(f'{URL}/_doc/{session_id}', auth=HTTPBasicAuth(os_username, os_password),
                                  json=document)
         if response.status_code not in [200, 201]:
             logger.error(response.status_code)
