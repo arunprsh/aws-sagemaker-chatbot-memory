@@ -40,9 +40,6 @@ def lambda_handler(event: dict, context: dict) -> None:
     logger.info(f'Received event: {event}')
     logger.info(f'Received context: {context}')
 
-    logger.info(type(event))
-    logger.info(type(context))
-
     for record in event['Records']:
         if record['eventName'] == 'MODIFY':
             session_item = record['dynamodb']['NewImage']
