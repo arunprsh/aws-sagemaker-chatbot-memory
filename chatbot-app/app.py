@@ -70,7 +70,7 @@ def new_session():
 with st.sidebar.expander('🛠️', expanded=False):
     max_turns = st.number_input('Number of turns to remember',
                                 min_value=1,
-                                max_value=5)
+                                max_value=100)
 
 # Set up the Streamlit app layout
 st.title('🤖 AI Assistant 🧠')
@@ -111,15 +111,16 @@ AI:"""
     return completion
 
 
-def transform_ddb_past_history(history: list) -> str:
-    past_history_str = []
+def transform_ddb_past_history(history: list, num_turns=10) -> str:
+    past_hist = []
     for turn in history:
         me_utterance = turn['Me']
         bot_utterance = turn['AI']
-        past_history_str.append(f'Me: {me_utterance}')
-        past_history_str.append(f'AI: {bot_utterance}')
-    past_history_str = '\n'.join(past_history_str)
-    return past_history_str
+        past_hist.append(f'Me: {me_utterance}')
+        past_hist.append(f'AI: {bot_utterance}')
+    past_hist = past_hist[-num_turns*2:]
+    past_hist_str = '\n'.join(past_hist)
+    return past_hist_str
 
 
 if user_input:
@@ -130,7 +131,7 @@ if user_input:
         st.session_state.session_id = create_session(sessions_table)
 
     past_history = get_conversations_by_session_id(conversations_table, st.session_state.session_id)
-    past_history = transform_ddb_past_history(past_history)
+    past_history = transform_ddb_past_history(past_history, max_turns)
     output = respond_by_task(user_input, past_history)
 
     st.session_state.past.append(user_input)

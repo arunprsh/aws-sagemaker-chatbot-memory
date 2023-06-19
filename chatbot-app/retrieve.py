@@ -6,22 +6,19 @@ import boto3
 import yaml
 import json
 
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger('log')
 
-with open('es_config.yml', 'r') as file:
+
+with open('./config/config.yml', 'r') as file:
     config = yaml.safe_load(file)
 
-es_username = config['credentials']['username']
-es_password = config['credentials']['password']
-
-domain_endpoint = config['domain']['endpoint']
-domain_index = config['domain']['index']
-
-TEXT_EMBEDDING_MODEL_ENDPOINT_NAME = 'huggingface-textembedding-gpt-j-6b-fp16-1680825746'
-TEXT_GENERATION_MODEL_ENDPOINT_NAME = 'huggingface-text2text-flan-t5-xl-1679769737'
-
+os_username = config['opensearch']['credentials']['username']
+os_password = config['opensearch']['credentials']['password']
+domain_endpoint = config['opensearch']['domain']['endpoint']
+text_embedding_model_endpoint_name = config['jumpstart']['text_embed_endpoint_name']
 CONTENT_TYPE = 'application/json'
 
 sagemaker_client = boto3.client('runtime.sagemaker')
@@ -30,7 +27,7 @@ sagemaker_client = boto3.client('runtime.sagemaker')
 def encode_query(query: str) -> list:
     payload = {'text_inputs': [query]}
     payload = json.dumps(payload).encode('utf-8')
-    response = sagemaker_client.invoke_endpoint(EndpointName=TEXT_EMBEDDING_MODEL_ENDPOINT_NAME,
+    response = sagemaker_client.invoke_endpoint(EndpointName=text_embedding_model_endpoint_name,
                                                 ContentType='application/json',
                                                 Body=payload)
     body = json.loads(response['Body'].read())
@@ -58,7 +55,7 @@ def retrieve_top_matching_passages(query: str, index: str) -> list:
     embedding = encode_query(query)
     query = get_es_query(embedding, 3)
     url = f'{domain_endpoint}/{index}/_search'
-    response = requests.post(url, auth=HTTPBasicAuth(es_username, es_password), json=query)
+    response = requests.post(url, auth=HTTPBasicAuth(os_username, os_password), json=query)
     response_json = response.json()
     hits = response_json['hits']['hits']
     for hit in hits:
@@ -75,7 +72,7 @@ def retrieve_top_matching_past_conversations(query: str, index: str) -> list:
     embedding = encode_query(query)
     query = get_es_query(embedding, 3)
     url = f'{domain_endpoint}/{index}/_search'
-    response = requests.post(url, auth=HTTPBasicAuth(es_username, es_password), json=query)
+    response = requests.post(url, auth=HTTPBasicAuth(os_username, os_password), json=query)
     response_json = response.json()
     hits = response_json['hits']['hits']
 

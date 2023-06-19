@@ -51,7 +51,6 @@ def lambda_handler(event: dict, context: dict) -> None:
 
             # Flatten the conversation turns into a dict
             flattened_conversations = flatten_conversations(conversation_turns)
-            # print(flattened_conversations)
 
             summary = summarize_conversations(flattened_conversations)
 

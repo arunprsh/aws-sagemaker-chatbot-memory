@@ -1,5 +1,4 @@
 import logging
-import openai
 import boto3
 import json
 import yaml
@@ -9,15 +8,13 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(level
                     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger('log')
 
-with open('./config.yml', 'r') as f:
+
+with open('./config/config.yml', 'r') as f:
     config = yaml.safe_load(f)
-    
 
-api_key = config['openai']['api_key']
-openai.api_key = api_key
-
-ENDPOINT_NAME = 'huggingface-text2text-flan-t5-xxl-1682050566'
+endpoint_name = config['jumpstart']['text_gen_endpoint_name']
 CONTENT_TYPE = 'application/json'
+
 client = boto3.client('sagemaker-runtime')
 
 NUM_RETURN_SEQUENCES = 1
@@ -36,7 +33,7 @@ def detect_task(query: str) -> str:
         return 'STM CHAT'
 
 
-def generate_(prompt: str, max_length=256) -> str:
+def generate(prompt: str, max_length=256) -> str:
     payload = {'text_inputs': prompt,
                'max_length': max_length,
                'num_return_sequences': NUM_RETURN_SEQUENCES,
@@ -52,13 +49,6 @@ def generate_(prompt: str, max_length=256) -> str:
     generated_text = model_predictions['generated_texts'][0]
     completion = generated_text.strip()
     return completion
-
-
-def generate(prompt: str, max_tokens=256) -> str:
-    completions = openai.Completion.create(model='text-davinci-003', prompt=prompt, temperature=0.25,
-                                           max_tokens=max_tokens)
-    output = completions['choices'][0]['text']
-    return output
 
 
 def summarize_passages_and_collate_answers(passages: list, query: str) -> str:

@@ -1,0 +1,8 @@
+Environment Variable,Value
+OS_ENDPOINT,https://xxxxxxxxx.us-east-1.es.amazonaws.com
+OS_INDEX_NAME,conversations
+OS_PASSWORD,xxxxxxxxx
+OS_USERNAME,xxxxxxxxx
+REGION,us-east-1
+SAGEMAKER_TEXT_EMBED_ENDPOINT,huggingface-textembedding-gpt-j-6b-fp16-xxxxxxxxx
+SAGEMAKER_TEXT_GEN_ENDPOINT,flan-xxl-xxxxxxxxx
