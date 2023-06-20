@@ -67,7 +67,7 @@ def new_session():
 
 
 # Set up sidebar with various options
-with st.sidebar.expander('🛠️', expanded=False):
+with st.sidebar.expander('🛠️', expanded=True):
     max_turns = st.number_input('Number of turns to remember',
                                 min_value=1,
                                 max_value=100)
@@ -89,6 +89,7 @@ conversations_table = dynamodb.Table('conversations')
 def respond_by_task(query, history):
     logger.info(f'HISTORY: {history}')
     task_type = detect_task(query)
+    logger.info(f'TASK TYPE = {task_type}')
     completion = None
     if task_type == 'STM CHAT':
         if len(history) > 0:
@@ -106,7 +107,7 @@ AI:"""
         completion = retrieve_top_matching_past_conversations(user_input, 'conversations')
         completion = '\n\n'.join(completion)
     elif task_type == 'LTM VERIFIED SOURCES':
-        completion = retrieve_top_matching_passages(user_input, 'legal-passages')
+        completion = retrieve_top_matching_passages(user_input, 'passages')
         completion = summarize_passages_and_collate_answers(completion, user_input)
     return completion
 
